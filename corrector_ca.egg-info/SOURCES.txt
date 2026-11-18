@@ -1,0 +1,15 @@
+LICENSE
+README.md
+pyproject.toml
+corrector_ca/__init__.py
+corrector_ca/cli.py
+corrector_ca/client.py
+corrector_ca/correct.py
+corrector_ca/guard.py
+corrector_ca/mask.py
+corrector_ca.egg-info/PKG-INFO
+corrector_ca.egg-info/SOURCES.txt
+corrector_ca.egg-info/dependency_links.txt
+corrector_ca.egg-info/entry_points.txt
+corrector_ca.egg-info/top_level.txt
+corrector_ca/data/protegidos.txt

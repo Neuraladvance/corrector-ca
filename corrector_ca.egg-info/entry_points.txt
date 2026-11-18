@@ -1,0 +1,2 @@
+[console_scripts]
+corrector-ca = corrector_ca.cli:main

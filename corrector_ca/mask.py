@@ -28,11 +28,23 @@ MARK = "⟦%d⟧"
 
 
 def load_whitelist(path=None):
-    """Lista blanca: una entrada por línea, # comenta. Nombres propios, marcas, jerga."""
-    if path is None:
-        here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        path = os.path.join(here, "protegidos.txt")
-    if not os.path.isfile(path):
+    """Lista blanca: una entrada por línea, # comenta. Nombres propios, marcas, jerga.
+
+    Busca, en este orden: la ruta indicada, ./protegidos.txt (proyecto del usuario) y la
+    copia que viaja con el paquete.
+    """
+    candidatos = []
+    if path:
+        candidatos.append(path)
+    else:
+        candidatos.append(os.path.join(os.getcwd(), "protegidos.txt"))
+        candidatos.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "protegidos.txt"))
+        candidatos.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "protegidos.txt"))
+    for p in candidatos:
+        if os.path.isfile(p):
+            path = p
+            break
+    else:
         return []
     out = []
     with open(path, encoding="utf-8") as fh:

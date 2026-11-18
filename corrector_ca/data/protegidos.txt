@@ -1,0 +1,18 @@
+# Fragmentos que el corrector NUNCA debe cambiar.
+# Uno por línea. Sirven para nombres propios, marcas, siglas y jerga de tu sector
+# que el modelo podría "corregir" por error.
+# Las líneas que empiezan por # se ignoran.
+
+npm
+pgvector
+PostgreSQL
+Kubernetes
+Stripe
+Sapiens-7B
+eu-south-2
+Gironès
+Montsó
+Osca
+Mobile World Congress
+Fusteria Miralles
+Generalitat

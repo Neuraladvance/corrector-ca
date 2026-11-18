@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "corrector-ca"
+version = "0.1.0"
+description = "Corrector de catalán para texto generado por LLM, con verificador de daño"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "corrector-ca contributors" }]
+keywords = ["catalan", "català", "ortografia", "gramatica", "llm", "guardrail"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: Catalan",
+]
+dependencies = []
+
+[project.scripts]
+corrector-ca = "corrector_ca.cli:main"
+
+[tool.setuptools]
+packages = ["corrector_ca"]
+
+[tool.setuptools.package-data]
+corrector_ca = ["data/*.txt"]
