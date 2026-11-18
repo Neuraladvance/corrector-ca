@@ -4,24 +4,45 @@ import re
 
 from . import client, guard, mask
 
-# palabras función que delatan catalán frente a castellano
-CA = {"els", "les", "amb", "però", "perquè", "això", "aquest", "aquesta", "dels", "més",
-      "també", "sense", "segons", "quan", "perquè", "nostre", "vostre", "per", "que", "és",
-      "són", "ha", "han", "una", "un", "el", "la", "de", "i", "no", "es", "en", "al", "del"}
-ES = {"los", "las", "con", "pero", "porque", "esto", "este", "esta", "de los", "más",
-      "también", "sin", "según", "cuando", "nuestro", "vuestro", "para", "que", "es",
-      "son", "ha", "han", "una", "un", "el", "la", "de", "y", "no", "se", "en", "al", "del"}
+# Palabras que solo existen en una de las dos lenguas (las ambiguas quedan fuera a propósito:
+# "un/una/de/que/no/en/al/del/el/la/es/son/ha/eran/entre/sobre/ver/general/un".
+CA_ONLY = {
+    "bon", "bona", "hola", "fet", "fer", "petit", "petita", "amb", "però", "perquè", "això",
+    "aquest", "aquesta", "aquests", "aquestes", "també", "gairebé", "doncs", "els", "les",
+    "dels", "pels", "als", "és", "són", "molt", "molta", "molts", "moltes", "cal", "vam",
+    "vaig", "hem", "hi", "ho", "així", "llavors", "mentre", "sense", "quan", "nosaltres",
+    "vosaltres", "ells", "elles", "meva", "teva", "seva", "nostre", "vostre", "serà", "eren",
+    "estat", "sigut", "tingut", "tenir", "tinc", "té", "tenim", "tenen", "faig", "fas", "fem",
+    "fan", "diu", "veig", "veu", "veure", "sap", "puc", "pots", "podem", "poden", "anem",
+    "anar", "vinc", "gràcies", "ningú", "algú", "gaire", "força", "per", "com", "on", "qui",
+}
+ES_ONLY = {
+    "los", "las", "con", "pero", "porque", "esto", "este", "esta", "estos", "estas",
+    "también", "según", "cuando", "nuestro", "nuestra", "vuestro", "vuestra", "para", "muy",
+    "más", "del", "al", "y", "hay", "hacer", "hecho", "pequeño", "pequeña", "nosotros",
+    "vosotros", "ellas", "yo", "él", "ella", "eran", "hemos", "tengo", "tiene", "tenemos",
+    "tienen", "hago", "hace", "hacen", "digo", "dice", "decir", "veo", "puedo", "puede",
+    "podemos", "pueden", "voy", "fui", "fue", "fueron", "vengo", "sin", "por", "como",
+}
+# caracteres y dígrafos que deciden solos cuando el texto es corto
+CA_CHARS = "àèòç·ï"
+ES_CHARS = "ñ¿¡áíóú"
 
 
 def parece_catalan(text):
-    tokens = re.findall(r"[a-zàèéíòóúçïü]+", text.lower())
+    """Decide si el texto es catalán. Empate o texto sin pistas → no se corrige."""
+    low = text.lower()
+    tokens = re.findall(r"[a-zàèéíòóúçïü]+", low)
     if not tokens:
         return False
-    ca = sum(1 for t in tokens if t in CA and t not in {"el", "la", "de", "i", "no", "es", "en", "al", "del", "que", "una", "un", "ha", "han", "son", "són", "per"})
-    es = sum(1 for t in tokens if t in ES and t not in {"el", "la", "de", "y", "no", "se", "en", "al", "del", "que", "una", "un", "ha", "han", "son", "es"})
-    # señales fuertes del catalán
-    fuertes = len(re.findall(r"\b(l'|d'|els|les|amb|això|aquest|perquè|també|és|són)\b", text.lower()))
-    return fuertes + ca > es
+
+    ca = sum(1 for t in tokens if t in CA_ONLY)
+    es = sum(1 for t in tokens if t in ES_ONLY)
+    ca += 3 * len(re.findall(r"\b(l'|d'|s'|n'|els|les|dels)", low))
+    ca += 2 * sum(low.count(c) for c in CA_CHARS)
+    es += 3 * sum(low.count(c) for c in ES_CHARS)
+    return ca > es
+
 
 
 def corregir(text, cfg=None, solo_verificar=False, forzar_idioma=False):
